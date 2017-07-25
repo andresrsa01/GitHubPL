@@ -36,7 +36,7 @@ namespace GitHub.Controllers
             var gig = new Gig()
             {
                 ArtistId = User.Identity.GetUserId(),
-                DateTime = DateTime.Parse($"{vm.Date} {vm.Time}"),
+                DateTime =vm.DateTime,
                 GenreId = vm.Genre,
                 Venue = vm.Venue
             };
