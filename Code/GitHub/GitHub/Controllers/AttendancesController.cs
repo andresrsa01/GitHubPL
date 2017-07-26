@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
+using GitHub.Dtos;
 using GitHub.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
@@ -18,8 +19,9 @@ namespace GitHub.Controllers
             _context = new ApplicationDbContext();
         }
 
+        //TODO tipo de autenticacion
         [HttpPost]
-        public async Task<IHttpActionResult> Attend([FromBody]int gigId)
+        public async Task<IHttpActionResult> Attend(AttendanceDto dto)
         {
             string att = null;
             if (User.Identity.IsAuthenticated)
@@ -33,12 +35,12 @@ namespace GitHub.Controllers
             _context = new ApplicationDbContext();
             var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_context));
             var user = await userManager.FindByEmailAsync(att);
-            if (_context.Attendances.Any(a => a.AttendeeId == user.Id && a.GigId == gigId))
+            if (_context.Attendances.Any(a => a.AttendeeId == user.Id && a.GigId == dto.GigId))
                 return BadRequest("The Attendance already exists.");
 
             var attendance = new Attendance()
             {
-                GigId = gigId,
+                GigId = dto.GigId,
                 AttendeeId = user.Id
             };
             _context.Attendances.Add(attendance);
