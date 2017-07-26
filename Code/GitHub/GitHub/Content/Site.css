@@ -38,6 +38,17 @@ textarea {
         color: #fff;
     }
 
+
+.dropdown-menu {
+    box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
+.navbar-brand {
+    font-weight: 700;
+}
+
+
 body {
     font-family: Lato,"Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 17px;
@@ -59,6 +70,12 @@ body {
         box-shadow: none;
         -webkit-box-shadow: none;
     }
+
+
+.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
+    background-color: rgba(205, 40, 39,0.55);
+}
+
 
 .btn {
     padding: 6px 20px;
