@@ -34,7 +34,11 @@ namespace GitHub.Controllers
             }
             _context = new ApplicationDbContext();
             var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_context));
-            var user = await userManager.FindByEmailAsync(att);
+
+            var user = User.Identity.AuthenticationType != "ApplicationCookie"
+                ? await userManager.FindByEmailAsync(att)
+                : await userManager.FindByIdAsync(att);
+
             if (_context.Attendances.Any(a => a.AttendeeId == user.Id && a.GigId == dto.GigId))
                 return BadRequest("The Attendance already exists.");
 
