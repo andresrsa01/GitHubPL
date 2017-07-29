@@ -57,16 +57,17 @@ namespace GitHub.Controllers
             var gigs = _context.Attendances
                 .Where(a => a.AttendeeId == userId)
                 .Select(a => a.Gig)
-                .Include(g=>g.Artist)
-                .Include(g=>g.Genre)
+                .Include(g => g.Artist)
+                .Include(g => g.Genre)
                 .ToList();
 
             var vm = new GigsViewModel()
             {
                 UpcomingGigs = gigs,
-                ShowActions = User.Identity.IsAuthenticated
+                ShowActions = User.Identity.IsAuthenticated,
+                Heading = "Gigs I'm Attending"
             };
-            return View(vm);
+            return View("Gigs", vm);
         }
     }
 }
