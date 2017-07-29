@@ -11,6 +11,8 @@ namespace GitHub.Models
 
         public DbSet<Attendance> Attendances { get; set; }
 
+        public DbSet<Following> Followings { get; set; }
+
 
 
         public ApplicationDbContext()
@@ -28,6 +30,16 @@ namespace GitHub.Models
             modelBuilder.Entity<Attendance>()
                 .HasRequired(a => a.Gig)
                 .WithMany().WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(u=>u.Followers)
+                .WithRequired(f=>f.Followee)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<ApplicationUser>()
+                .HasMany(f=>f.Followees)
+                .WithRequired(f=>f.Follower)
+                .WillCascadeOnDelete(false);
 
             base.OnModelCreating(modelBuilder);
         }
