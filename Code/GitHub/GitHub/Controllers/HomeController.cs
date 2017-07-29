@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity;
 using System.Web.Mvc;
 using GitHub.Models;
+using GitHub.ViewModels;
 
 namespace GitHub.Controllers
 {
@@ -19,10 +19,16 @@ namespace GitHub.Controllers
         {
             var upcomingGigs = _context.Gigs
                 .Include(gig => gig.Artist)
-                .Include(g=>g.Genre)
+                .Include(g => g.Genre)
                 .Where(gig => gig.DateTime > DateTime.Now);
 
-            return View(upcomingGigs);
+            var viewModel = new HomeViewModel()
+            {
+                UpcomingGigs = upcomingGigs,
+                ShowActions = User.Identity.IsAuthenticated
+            };
+
+            return View(viewModel);
         }
 
         public ActionResult About()
