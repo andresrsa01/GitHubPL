@@ -22,9 +22,10 @@ namespace GitHub.Controllers
         {
             var vm = new GigFormViewModel()
             {
-                Genres = _context.Genres.ToList()
+                Genres = _context.Genres.ToList(),
+                Heading = "Add a Gig"
             };
-            return View(vm);
+            return View("GigForm", vm);
         }
 
         [Authorize]
@@ -35,7 +36,7 @@ namespace GitHub.Controllers
             if (!ModelState.IsValid)
             {
                 vm.Genres = _context.Genres.ToList();
-                return View("Create", vm);
+                return View("GigForm", vm);
             }
             var gig = new Gig()
             {
@@ -77,10 +78,30 @@ namespace GitHub.Controllers
             var userId = User.Identity.GetUserId();
             var gigs = _context.Gigs
                 .Where(g => g.ArtistId == userId && g.DateTime > DateTime.Now)
-                .Include(g=>g.Genre)
+                .Include(g => g.Genre)
                 .ToList();
 
             return View(gigs);
         }
+
+        [Authorize]
+        // GET: Gigs
+        public ActionResult Edit(int id)
+        {
+
+            var userId = User.Identity.GetUserId();
+            var gig = _context.Gigs.Single(g => g.Id == id && g.ArtistId == userId);
+            var vm = new GigFormViewModel()
+            {
+                Genres = _context.Genres.ToList(),
+                Date = gig.DateTime.ToString("d MMM yyyy"),
+                Time = gig.DateTime.ToString("HH:mm"),
+                Genre = gig.GenreId,
+                Venue = gig.Venue,
+                Heading = "Edit a Gig"
+            };
+            return View("GigForm", vm);
+        }
+
     }
 }
