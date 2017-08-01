@@ -9,6 +9,8 @@ namespace GitHub.ViewModels
 {
     public class GigFormViewModel
     {
+        public int Id { get; set; }
+
         [Required]
         public string Venue { get; set; }
 
@@ -26,6 +28,8 @@ namespace GitHub.ViewModels
         public IEnumerable<Genre> Genres { get; set; }
 
         public string Heading { get; set; }
+
+        public string Action => Id != 0 ? "Update" : "Create";
 
         public DateTime GetDateTime()
         {
