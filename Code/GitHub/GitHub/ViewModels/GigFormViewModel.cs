@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Web;
+using System.Web.Mvc;
+using GitHub.Controllers;
 using GitHub.Models;
 
 namespace GitHub.ViewModels
@@ -29,7 +32,18 @@ namespace GitHub.ViewModels
 
         public string Heading { get; set; }
 
-        public string Action => Id != 0 ? "Update" : "Create";
+        public string Action
+        {
+            get
+            {
+                Expression<Func<GigsController, ActionResult>> update = (c => c.Update(this));
+                Expression<Func<GigsController, ActionResult>> create = (c => c.Create(this));
+
+                var action = (Id != 0) ? update : create;
+                return (action.Body as MethodCallExpression).Method.Name;
+
+            }
+        }
 
         public DateTime GetDateTime()
         {
