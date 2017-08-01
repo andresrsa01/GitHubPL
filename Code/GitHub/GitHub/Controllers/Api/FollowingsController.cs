@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using GitHub.Dtos;
 using GitHub.Models;
 using Microsoft.AspNet.Identity;
 
-namespace GitHub.Controllers
+namespace GitHub.Controllers.Api
 {
     public class FollowingsController : ApiController
     {
