@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System.Linq;
 using System.Web.Http;
 using GitHub.Models;
+using System.Data.Entity;
 using Microsoft.AspNet.Identity;
 
 namespace GitHub.Controllers.Api
@@ -12,7 +9,7 @@ namespace GitHub.Controllers.Api
     [Authorize]
     public class GigsController : ApiController
     {
-        private ApplicationDbContext _context;
+        private readonly ApplicationDbContext _context;
 
         public GigsController()
         {
@@ -23,7 +20,9 @@ namespace GitHub.Controllers.Api
         public IHttpActionResult Cancel(int id)
         {
             var userId = User.Identity.GetUserId();
-            var gig = _context.Gigs.Single(g => g.Id == id && g.ArtistId == userId);
+            var gig = _context.Gigs
+                .Include(g => g.Attendances.Select(e => e.Attendee))
+                .Single(g => g.Id == id && g.ArtistId == userId);
 
             if (gig.IsCanceled)
                 return NotFound();
@@ -32,12 +31,7 @@ namespace GitHub.Controllers.Api
 
             var notification = new Notification(NotificationType.GigCanceled, gig);
 
-            var attendees = _context.Attendances
-                .Where(a => a.GigId == gig.Id)
-                .Select(a => a.Attendee)
-                .ToList();
-
-            foreach (var attendee in attendees)
+            foreach (var attendee in gig.Attendances.Select(a => a.Attendee))
             {
                 attendee.Notify(notification);
             }
