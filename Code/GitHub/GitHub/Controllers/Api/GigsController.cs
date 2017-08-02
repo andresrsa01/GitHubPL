@@ -20,6 +20,7 @@ namespace GitHub.Controllers.Api
         public IHttpActionResult Cancel(int id)
         {
             var userId = User.Identity.GetUserId();
+
             var gig = _context.Gigs
                 .Include(g => g.Attendances.Select(e => e.Attendee))
                 .Single(g => g.Id == id && g.ArtistId == userId);
@@ -27,14 +28,7 @@ namespace GitHub.Controllers.Api
             if (gig.IsCanceled)
                 return NotFound();
 
-            gig.IsCanceled = true;
-
-            var notification = new Notification(NotificationType.GigCanceled, gig);
-
-            foreach (var attendee in gig.Attendances.Select(a => a.Attendee))
-            {
-                attendee.Notify(notification);
-            }
+            gig.Cancel();
             _context.SaveChanges();
 
             return Ok();
