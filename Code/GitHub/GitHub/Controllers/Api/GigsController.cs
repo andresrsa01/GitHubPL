@@ -30,12 +30,7 @@ namespace GitHub.Controllers.Api
 
             gig.IsCanceled = true;
 
-            var notification = new Notification()
-            {
-                DateTime = DateTime.Now,
-                Gig = gig,
-                Type = NotificationType.GigCanceled
-            };
+            var notification = new Notification(NotificationType.GigCanceled, gig);
 
             var attendees = _context.Attendances
                 .Where(a => a.GigId == gig.Id)

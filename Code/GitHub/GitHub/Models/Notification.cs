@@ -5,11 +5,11 @@ namespace GitHub.Models
 {
     public class Notification
     {
-        public int Id { get; set; }
+        public int Id { get; private set; }
 
-        public DateTime DateTime { get; set; }
+        public DateTime DateTime { get; private set; }
 
-        public NotificationType Type { get; set; }
+        public NotificationType Type { get; private set; }
 
         public DateTime? OriginalDateTime { get; set; }
 
@@ -17,5 +17,15 @@ namespace GitHub.Models
 
         [Required]
         public Gig Gig { get; set; }
+
+
+        public Notification(NotificationType type, Gig gig)
+        {
+            if (gig == null)
+                throw new ArgumentNullException(nameof(gig));
+            Type = type;
+            Gig = gig;
+            DateTime = DateTime.Now;
+        }
     }
 }
