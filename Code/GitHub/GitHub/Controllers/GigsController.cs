@@ -120,12 +120,8 @@ namespace GitHub.Controllers
             var gig = _context.Gigs.Single(g => g.Id == vm.Id
              && g.ArtistId == userId);
 
-            gig.Venue = vm.Venue;
-            gig.DateTime = vm.GetDateTime();
-            gig.GenreId = vm.Genre;
-
+            gig.Modify(vm.Venue, vm.GetDateTime(), vm.Genre);
             _context.SaveChanges();
-
             return RedirectToAction("Mine", "Gigs");
         }
 

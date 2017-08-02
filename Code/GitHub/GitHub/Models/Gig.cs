@@ -33,7 +33,7 @@ namespace GitHub.Models
 
         public Gig()
         {
-            Attendances= new Collection<Attendance>();
+            Attendances = new Collection<Attendance>();
         }
 
         public void Cancel()
@@ -43,9 +43,26 @@ namespace GitHub.Models
             var notification = new Notification(NotificationType.GigCanceled, this);
 
             foreach (var attendee in Attendances.Select(a => a.Attendee))
-            {
                 attendee.Notify(notification);
-            }
+
+        }
+
+        public void Modify(string vmVenue, DateTime getDateTime, byte vmGenre)
+        {
+
+            var notification = new Notification(NotificationType.GigUpdated, this)
+            {
+                OriginalDateTime = DateTime,
+                OriginalVenue = vmVenue
+            };
+
+            Venue = vmVenue;
+            DateTime = getDateTime;
+            GenreId = vmGenre;
+
+            foreach (var attendee in Attendances.Select(a => a.Attendee))
+                attendee.Notify(notification);
+
         }
     }
 }
