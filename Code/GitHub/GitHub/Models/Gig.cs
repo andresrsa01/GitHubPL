@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Web;
 
 namespace GitHub.Models
 {
@@ -40,7 +39,7 @@ namespace GitHub.Models
         {
             IsCanceled = true;
 
-            var notification = new Notification(NotificationType.GigCanceled, this);
+            var notification = Notification.GigCanceled(this);
 
             foreach (var attendee in Attendances.Select(a => a.Attendee))
                 attendee.Notify(notification);
@@ -50,11 +49,7 @@ namespace GitHub.Models
         public void Modify(string vmVenue, DateTime getDateTime, byte vmGenre)
         {
 
-            var notification = new Notification(NotificationType.GigUpdated, this)
-            {
-                OriginalDateTime = DateTime,
-                OriginalVenue = vmVenue
-            };
+            var notification = Notification.GigUpdated(this, DateTime, Venue);
 
             Venue = vmVenue;
             DateTime = getDateTime;
