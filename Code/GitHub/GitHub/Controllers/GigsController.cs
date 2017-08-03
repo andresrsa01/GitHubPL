@@ -117,8 +117,9 @@ namespace GitHub.Controllers
                 return View("GigForm", vm);
             }
             var userId = User.Identity.GetUserId();
-            var gig = _context.Gigs.Single(g => g.Id == vm.Id
-             && g.ArtistId == userId);
+            var gig = _context.Gigs
+             .Include(g => g.Attendances.Select(e => e.Attendee))
+             .Single(g => g.Id == vm.Id && g.ArtistId == userId);
 
             gig.Modify(vm.Venue, vm.GetDateTime(), vm.Genre);
             _context.SaveChanges();
