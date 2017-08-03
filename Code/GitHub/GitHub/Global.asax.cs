@@ -6,6 +6,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using GitHub.App_Start;
 
 namespace GitHub
 {
@@ -13,6 +14,7 @@ namespace GitHub
     {
         protected void Application_Start()
         {
+            AutoMapper.Mapper.Initialize(c=>c.AddProfile<MappingProfile>());
             GlobalConfiguration.Configure(WebApiConfig.Register);
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
