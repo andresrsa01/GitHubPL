@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">    
+    <link href="https://fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 
@@ -39,5 +39,17 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    <script>
+        $(document).ready(function () {
+            $.getJSON("/api/notifications",
+                function (notifications) {
+                    $(".js-notifications-count")
+                        .text(notifications.length)
+                        .removeClass("hide")
+                        .addClass("animated bounceInDown");
+                });
+        });
+
+    </script>
 </body>
 </html>
