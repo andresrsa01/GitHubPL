@@ -44,7 +44,7 @@ namespace GitHub.Controllers.Api
                 : userManager.FindById(att);
 
             var notifications = _context.UserNotifications
-                .Where(u => u.UserId == userId.Id)
+                .Where(u => u.UserId == userId.Id && !u.IsRead)
                 .Select(u => u.Notification)
                 .Include(n => n.Gig.Artist)
                 .ToList();
