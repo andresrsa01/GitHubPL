@@ -41,7 +41,7 @@
     @RenderSection("scripts", required: false)
 
     <script type="text/x-template" id="notifications-template">
-        <ul>
+        <ul class="notifications">
             <%
             _.each(notifications,function(notification){
             if(notification.Type==1){ %>
