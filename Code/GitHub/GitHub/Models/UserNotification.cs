@@ -18,11 +18,12 @@ namespace GitHub.Models
 
         public Notification Notification { get; private set; }
 
-        public bool IsRead { get; set; }
+        public bool IsRead { get; private set; }
+
 
         public UserNotification(ApplicationUser user, Notification notification)
         {
-            if(user==null)
+            if (user == null)
                 throw new ArgumentNullException(nameof(user));
 
             if (notification == null)
@@ -34,7 +35,12 @@ namespace GitHub.Models
 
         protected UserNotification()
         {
-            
+
+        }
+
+        public void Read()
+        {
+            IsRead = true;
         }
     }
 }
