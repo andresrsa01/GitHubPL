@@ -169,6 +169,12 @@ span.field-validation-error {
 .popover-notifications ul.notifications .highlight {
   font-weight: bold;
 }
+.form-control:focus {
+  box-shadow: none;
+}
 #searchGigs {
   width: 300px;
+}
+#searchGigs input {
+  max-width: none;
 }
