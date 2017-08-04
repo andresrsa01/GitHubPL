@@ -13,6 +13,10 @@ namespace GitHub.Models
 
         public DbSet<Following> Followings { get; set; }
 
+        public DbSet<Notification> Notifications { get; set; }
+
+        public DbSet<UserNotification> UserNotifications { get; set; }
+
 
 
         public ApplicationDbContext()
@@ -29,7 +33,8 @@ namespace GitHub.Models
         {
             modelBuilder.Entity<Attendance>()
                 .HasRequired(a => a.Gig)
-                .WithMany().WillCascadeOnDelete(false);
+                .WithMany(g=>g.Attendances)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<ApplicationUser>()
                 .HasMany(u=>u.Followers)
@@ -40,6 +45,13 @@ namespace GitHub.Models
                 .HasMany(f=>f.Followees)
                 .WithRequired(f=>f.Follower)
                 .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<UserNotification>()
+                .HasRequired(n => n.User)
+                .WithMany(u=>u.UserNotifications)
+                .WillCascadeOnDelete(false);
+
+            
 
             base.OnModelCreating(modelBuilder);
         }

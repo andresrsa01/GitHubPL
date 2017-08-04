@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -7,7 +7,7 @@ using GitHub.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
-namespace GitHub.Controllers
+namespace GitHub.Controllers.Api
 {
     [Authorize]
     public class AttendancesController : ApiController
