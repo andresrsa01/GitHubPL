@@ -46,7 +46,7 @@ namespace GitHub.Controllers
                 ShowActions = User.Identity.IsAuthenticated,
                 Heading = "Upcoming Gigs",
                 SearchTerm = query,
-                Attendances=attendances
+                Attendances = attendances
             };
 
             return View("Gigs", viewModel);
