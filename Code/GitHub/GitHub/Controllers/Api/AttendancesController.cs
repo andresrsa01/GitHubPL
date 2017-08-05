@@ -51,5 +51,37 @@ namespace GitHub.Controllers.Api
             _context.SaveChanges();
             return Ok();
         }
+
+
+        [HttpDelete]
+        public IHttpActionResult DeleteAttendance(int id)
+        {
+            string att = null;
+            if (User.Identity.IsAuthenticated)
+            {
+                var claimsIdentity = User.Identity as ClaimsIdentity;
+                if (claimsIdentity != null)
+                {
+                    att = claimsIdentity.Claims.First().Value;
+                }
+            }
+            _context = new ApplicationDbContext();
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_context));
+
+            var user = User.Identity.AuthenticationType != "ApplicationCookie"
+                ?  userManager.FindByEmail(att)
+                :  userManager.FindById(att);
+
+            var attendance = _context.Attendances
+                .SingleOrDefault(a => a.AttendeeId == user.Id && a.GigId == id);
+
+            if (attendance == null)
+                return NotFound();
+
+            _context.Attendances.Remove(attendance);
+            _context.SaveChanges();
+            return Ok(id);
+
+        }
     }
 }
