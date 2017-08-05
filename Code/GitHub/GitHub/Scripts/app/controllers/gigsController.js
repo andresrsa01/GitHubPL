@@ -2,7 +2,7 @@
     var button;
 
     var done = function () {
-        var text = (button.text() === "Going") ? "Going?" : "Going";
+        var text = button.text() === "Going" ? "Going?" : "Going";
         button.toggleClass("btn-info").toggleClass("btn-default").text(text);
     };
 
@@ -26,6 +26,6 @@
 
     return {
         init: init
-    }
+    };
 
 }(AttendanceService);//IIFE //pasamos como referencia el servicio AttendanceService
