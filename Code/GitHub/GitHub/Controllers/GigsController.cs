@@ -1,8 +1,7 @@
-﻿using System;
-using System.Data.Entity;
-using System.Linq;
+﻿using System.Linq;
 using System.Web.Mvc;
 using GitHub.Models;
+using GitHub.Persistence;
 using GitHub.ViewModels;
 using Microsoft.AspNet.Identity;
 
@@ -12,9 +11,12 @@ namespace GitHub.Controllers
     {
         private readonly ApplicationDbContext _context;
 
+        private readonly UnitOfWork _unitOfWork;
+
         public GigsController()
         {
             _context = new ApplicationDbContext();
+            _unitOfWork = new UnitOfWork(_context);
         }
 
         [HttpPost]
@@ -29,7 +31,7 @@ namespace GitHub.Controllers
         {
             var vm = new GigFormViewModel()
             {
-                Genres = _context.Genres.ToList(),
+                Genres = _unitOfWork.Genres.GetGenres(),
                 Heading = "Add a Gig"
             };
             return View("GigForm", vm);
@@ -42,7 +44,7 @@ namespace GitHub.Controllers
         {
             if (!ModelState.IsValid)
             {
-                vm.Genres = _context.Genres.ToList();
+                vm.Genres = _unitOfWork.Genres.GetGenres();
                 return View("GigForm", vm);
             }
             var gig = new Gig()
@@ -52,9 +54,8 @@ namespace GitHub.Controllers
                 GenreId = vm.Genre,
                 Venue = vm.Venue
             };
-
-            _context.Gigs.Add(gig);
-            _context.SaveChanges();
+            _unitOfWork.Gigs.Add(gig);
+            _unitOfWork.Complete();
 
             return RedirectToAction("Mine", "Gigs");
         }
@@ -63,24 +64,14 @@ namespace GitHub.Controllers
         public ActionResult Attending()
         {
             var userId = User.Identity.GetUserId();
-            var gigs = _context.Attendances
-                .Where(a => a.AttendeeId == userId)
-                .Select(a => a.Gig)
-                .Include(g => g.Artist)
-                .Include(g => g.Genre)
-                .ToList();
-
-            var attendances = _context.Attendances
-               .Where(a => a.AttendeeId == userId && a.Gig.DateTime > DateTime.Now)
-               .ToList()
-               .ToLookup(a => a.GigId);
 
             var vm = new GigsViewModel()
             {
-                UpcomingGigs = gigs,
+                UpcomingGigs = _unitOfWork.Gigs.GetGigsUserAttending(userId),
                 ShowActions = User.Identity.IsAuthenticated,
                 Heading = "Gigs I'm Attending",
-                Attendances = attendances
+                Attendances = _unitOfWork.Attendees.GetFutureAttendances(userId)
+                    .ToLookup(a => a.GigId)
             };
             return View("Gigs", vm);
         }
@@ -89,12 +80,7 @@ namespace GitHub.Controllers
         public ActionResult Mine()
         {
             var userId = User.Identity.GetUserId();
-            var gigs = _context.Gigs
-                .Where(g => g.ArtistId == userId
-                && g.DateTime > DateTime.Now
-                && !g.IsCanceled)
-                .Include(g => g.Genre)
-                .ToList();
+            var gigs = _unitOfWork.Gigs.GetUpComingGigsByArtist(userId);
 
             return View(gigs);
         }
@@ -103,13 +89,19 @@ namespace GitHub.Controllers
         // GET: Gigs
         public ActionResult Edit(int id)
         {
+            var gig = _unitOfWork.Gigs.GetGig(id);
 
-            var userId = User.Identity.GetUserId();
-            var gig = _context.Gigs.Single(g => g.Id == id && g.ArtistId == userId);
+            if (gig == null)
+                return HttpNotFound();
+
+
+            if (gig.ArtistId == User.Identity.GetUserId())
+                return new HttpUnauthorizedResult();
+
             var vm = new GigFormViewModel()
             {
                 Id = gig.Id,
-                Genres = _context.Genres.ToList(),
+                Genres = _unitOfWork.Genres.GetGenres(),
                 Date = gig.DateTime.ToString("d MMM yyyy"),
                 Time = gig.DateTime.ToString("HH:mm"),
                 Genre = gig.GenreId,
@@ -126,25 +118,29 @@ namespace GitHub.Controllers
         {
             if (!ModelState.IsValid)
             {
-                vm.Genres = _context.Genres.ToList();
+                vm.Genres = _unitOfWork.Genres.GetGenres();
                 return View("GigForm", vm);
             }
-            var userId = User.Identity.GetUserId();
-            var gig = _context.Gigs
-             .Include(g => g.Attendances.Select(e => e.Attendee))
-             .Single(g => g.Id == vm.Id && g.ArtistId == userId);
+            var gig = _unitOfWork.Gigs.GetGigWithAttendees(vm.Id);
+
+            if (gig == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (gig.ArtistId == User.Identity.GetUserId())
+            {
+                return new HttpUnauthorizedResult();
+            }
 
             gig.Modify(vm.Venue, vm.GetDateTime(), vm.Genre);
-            _context.SaveChanges();
+            _unitOfWork.Complete();
             return RedirectToAction("Mine", "Gigs");
         }
 
         public ActionResult Details(int id)
         {
-            var gig = _context.Gigs
-                .Include(g => g.Artist)
-                .Include(g => g.Genre)
-                .SingleOrDefault(g => g.Id == id);
+            var gig = _unitOfWork.Gigs.GetGig(id);
 
             if (gig == null)
                 return HttpNotFound();
@@ -158,11 +154,9 @@ namespace GitHub.Controllers
             {
                 var userId = User.Identity.GetUserId();
 
-                viewModel.IsAttending = _context.Attendances
-                    .Any(a => a.GigId == gig.Id && a.AttendeeId == userId);
+                viewModel.IsAttending = _unitOfWork.Attendees.GetAttendance(gig.Id, userId) != null;
 
-                viewModel.IsFollowing = _context.Followings
-                    .Any(f => f.FolloweeId == gig.ArtistId && f.FollowerId == userId);
+                viewModel.IsFollowing = _unitOfWork.Followings.GetFollowing(userId, gig.ArtistId) != null;
             }
             return View("Details", viewModel);
         }
