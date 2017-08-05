@@ -20,8 +20,8 @@
             attendanceService.deleteAttendance(gigId, done, fail);
     };
 
-    var init = function () {
-        $(".js-toggle-attendance").click(toggleAttendance);
+    var init = function (container) {
+        $(container).on("click", ".js-toggle-attendance", toggleAttendance);
     };
 
     return {
