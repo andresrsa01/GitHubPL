@@ -6,7 +6,7 @@ using GitHub.Models;
 
 namespace GitHub.Repositories
 {
-    public class FollowingRepository
+    public class FollowingRepository : IFollowingRepository
     {
         private readonly ApplicationDbContext _context;
 

@@ -4,7 +4,7 @@ using GitHub.Models;
 
 namespace GitHub.Repositories
 {
-    public class GenreRepository
+    public class GenreRepository : IGenreRepository
     {
         private readonly ApplicationDbContext _context;
 

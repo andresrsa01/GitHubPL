@@ -7,7 +7,7 @@ using GitHub.Models;
 
 namespace GitHub.Repositories
 {
-    public class GigRepository
+    public class GigRepository : IGigRepository
     {
         private readonly ApplicationDbContext _context;
 
