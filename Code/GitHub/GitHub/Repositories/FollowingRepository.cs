@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using GitHub.Models;
 
 namespace GitHub.Repositories
@@ -18,7 +15,7 @@ namespace GitHub.Repositories
         public Following GetFollowing(string userId, string gigArtistId)
         {
             return _context.Followings
-                   .Single(f => f.FolloweeId == gigArtistId && f.FollowerId == userId);
+                   .SingleOrDefault(f => f.FolloweeId == gigArtistId && f.FollowerId == userId);
         }
     }
 }
