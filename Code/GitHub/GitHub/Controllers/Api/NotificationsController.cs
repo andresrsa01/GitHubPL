@@ -7,8 +7,9 @@ using System.Net.Http;
 using System.Security.Claims;
 using System.Web.Http;
 using AutoMapper;
-using GitHub.Dtos;
-using GitHub.Models;
+using GitHub.Core.Dtos;
+using GitHub.Core.Models;
+using GitHub.Persistence;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 

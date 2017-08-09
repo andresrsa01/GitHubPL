@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using GitHub.Models;
+using GitHub.Core.Models;
+using GitHub.Persistence;
 using Microsoft.AspNet.Identity;
 
 namespace GitHub.Controllers

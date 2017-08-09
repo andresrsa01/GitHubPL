@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using AutoMapper;
-using GitHub.Dtos;
-using GitHub.Models;
+using GitHub.Core.Dtos;
+using GitHub.Core.Models;
 
 namespace GitHub.App_Start
 {

@@ -1,8 +1,9 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
-using GitHub.Models;
-using GitHub.Repositories;
-using GitHub.ViewModels;
+using GitHub.Core.Models;
+using GitHub.Core.ViewModels;
+using GitHub.Persistence;
+using GitHub.Persistence.Repositories.Repositories;
 using Microsoft.AspNet.Identity;
 
 namespace GitHub.Controllers

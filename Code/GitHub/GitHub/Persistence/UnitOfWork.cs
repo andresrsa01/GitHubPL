@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using GitHub.Models;
-using GitHub.Repositories;
+using GitHub.Core;
+using GitHub.Core.Models;
+using GitHub.Core.Repositories;
+using GitHub.Persistence.Repositories.Repositories;
 
 namespace GitHub.Persistence
 {

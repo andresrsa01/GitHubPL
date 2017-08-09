@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
-using GitHub.Models;
+using GitHub.Core.Models;
+using GitHub.Persistence;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 

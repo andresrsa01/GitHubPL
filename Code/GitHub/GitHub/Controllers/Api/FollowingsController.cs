@@ -1,7 +1,8 @@
 using System.Linq;
 using System.Web.Http;
-using GitHub.Dtos;
-using GitHub.Models;
+using GitHub.Core.Dtos;
+using GitHub.Core.Models;
+using GitHub.Persistence;
 using Microsoft.AspNet.Identity;
 
 namespace GitHub.Controllers.Api
