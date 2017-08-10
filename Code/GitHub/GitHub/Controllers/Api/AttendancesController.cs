@@ -2,6 +2,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web.Http;
+using GitHub.Core;
 using GitHub.Core.Dtos;
 using GitHub.Core.Models;
 using GitHub.Persistence;
@@ -13,11 +14,11 @@ namespace GitHub.Controllers.Api
     [Authorize]
     public class AttendancesController : ApiController
     {
-        private ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AttendancesController()
+        public AttendancesController(IUnitOfWork unitOfWork)
         {
-            _context = new ApplicationDbContext();
+            _unitOfWork = unitOfWork;
         }
 
         //TODO tipo de autenticacion
@@ -40,16 +41,18 @@ namespace GitHub.Controllers.Api
                 ? await userManager.FindByEmailAsync(att)
                 : await userManager.FindByIdAsync(att);
 
-            if (_context.Attendances.Any(a => a.AttendeeId == user.Id && a.GigId == dto.GigId))
+            var atten = _unitOfWork.Attendees.GetAttendance(dto.GigId, user.Id);
+            if (atten != null)
                 return BadRequest("The Attendance already exists.");
+
 
             var attendance = new Attendance()
             {
                 GigId = dto.GigId,
                 AttendeeId = user.Id
             };
-            _context.Attendances.Add(attendance);
-            _context.SaveChanges();
+            _unitOfWork.Attendees.Add(attendance);
+            _unitOfWork.Complete();
             return Ok();
         }
 
@@ -70,17 +73,15 @@ namespace GitHub.Controllers.Api
             var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_context));
 
             var user = User.Identity.AuthenticationType != "ApplicationCookie"
-                ?  userManager.FindByEmail(att)
-                :  userManager.FindById(att);
+                ? userManager.FindByEmail(att)
+                : userManager.FindById(att);
 
-            var attendance = _context.Attendances
-                .SingleOrDefault(a => a.AttendeeId == user.Id && a.GigId == id);
-
-            if (attendance == null)
+            var atten = _unitOfWork.Attendees.GetAttendance(id, user.Id);
+            if (atten != null)
                 return NotFound();
 
-            _context.Attendances.Remove(attendance);
-            _context.SaveChanges();
+            _unitOfWork.Attendees.Remove(attendance);
+            _unitOfWork.Complete();
             return Ok(id);
 
         }

@@ -5,7 +5,7 @@ using System.Linq;
 using GitHub.Core.Models;
 using GitHub.Core.Repositories;
 
-namespace GitHub.Persistence.Repositories.Repositories
+namespace GitHub.Persistence.Repositories
 {
     public class GigRepository : IGigRepository
     {

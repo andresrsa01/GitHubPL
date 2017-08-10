@@ -2,7 +2,7 @@
 using GitHub.Core.Models;
 using GitHub.Core.Repositories;
 
-namespace GitHub.Persistence.Repositories.Repositories
+namespace GitHub.Persistence.Repositories
 {
     public class FollowingRepository : IFollowingRepository
     {
@@ -17,6 +17,16 @@ namespace GitHub.Persistence.Repositories.Repositories
         {
             return _context.Followings
                    .SingleOrDefault(f => f.FolloweeId == gigArtistId && f.FollowerId == userId);
+        }
+
+        public void Add(Following following)
+        {
+            _context.Followings.Add(following);
+        }
+
+        public void Remove(Following following)
+        {
+            _context.Followings.Remove(following);
         }
     }
 }

@@ -3,11 +3,11 @@ using System.Web.Mvc;
 using GitHub.Core;
 using GitHub.Core.Models;
 using GitHub.Core.ViewModels;
-using GitHub.Persistence;
 using Microsoft.AspNet.Identity;
 
 namespace GitHub.Controllers
 {
+    [Authorize]
     public class GigsController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

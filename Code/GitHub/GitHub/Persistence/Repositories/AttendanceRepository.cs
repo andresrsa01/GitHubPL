@@ -4,7 +4,7 @@ using System.Linq;
 using GitHub.Core.Models;
 using GitHub.Core.Repositories;
 
-namespace GitHub.Persistence.Repositories.Repositories
+namespace GitHub.Persistence.Repositories
 {
     public class AttendanceRepository : IAttendanceRepository
     {
@@ -26,6 +26,16 @@ namespace GitHub.Persistence.Repositories.Repositories
         {
             return _context.Attendances
             .SingleOrDefault(a => a.GigId == gigId && a.AttendeeId == userId);
+        }
+
+        public void Add(Attendance attendance)
+        {
+            _context.Attendances.Add(attendance);
+        }
+
+        public void Remove(Attendance attendance)
+        {
+            _context.Attendances.Remove(attendance);
         }
     }
 }

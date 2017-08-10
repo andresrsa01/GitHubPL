@@ -1,8 +1,5 @@
-﻿using System.Linq;
-using System.Web.Http;
-using System.Data.Entity;
-using GitHub.Core.Models;
-using GitHub.Persistence;
+﻿using System.Web.Http;
+using GitHub.Core;
 using Microsoft.AspNet.Identity;
 
 namespace GitHub.Controllers.Api
@@ -10,11 +7,11 @@ namespace GitHub.Controllers.Api
     [Authorize]
     public class GigsController : ApiController
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public GigsController()
+        public GigsController(IUnitOfWork unitOfWork)
         {
-            _context = new ApplicationDbContext();
+            _unitOfWork = unitOfWork;
         }
 
         [HttpDelete]
@@ -22,15 +19,16 @@ namespace GitHub.Controllers.Api
         {
             var userId = User.Identity.GetUserId();
 
-            var gig = _context.Gigs
-                .Include(g => g.Attendances.Select(e => e.Attendee))
-                .Single(g => g.Id == id && g.ArtistId == userId);
+            var gig = _unitOfWork.Gigs.GetGigWithAttendees(id);
 
-            if (gig.IsCanceled)
+            if (gig == null || gig.IsCanceled)
                 return NotFound();
 
+            if (gig.ArtistId != userId)
+                return Unauthorized();
+
             gig.Cancel();
-            _context.SaveChanges();
+            _unitOfWork.Complete();
 
             return Ok();
         }

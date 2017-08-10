@@ -1,28 +1,26 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
+using GitHub.Core;
 using GitHub.Core.Models;
 using GitHub.Core.ViewModels;
 using GitHub.Persistence;
-using GitHub.Persistence.Repositories.Repositories;
+using GitHub.Persistence.Repositories;
 using Microsoft.AspNet.Identity;
 
 namespace GitHub.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly AttendanceRepository _attendanceRepository;
-        private readonly GigRepository _gigRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public HomeController()
+        public HomeController(IUnitOfWork unitOfWork)
         {
-            var context = new ApplicationDbContext();
-            _attendanceRepository = new AttendanceRepository(context);
-            _gigRepository = new GigRepository(context);
+            _unitOfWork = unitOfWork;
         }
 
         public ActionResult Index(string query = null)
         {
-            var upcomingGigs =_gigRepository.FutureUpcomingGigsNotCanceled();
+            var upcomingGigs =_unitOfWork.Gigs.FutureUpcomingGigsNotCanceled();
 
             if (!string.IsNullOrWhiteSpace(query))
             {
@@ -35,7 +33,7 @@ namespace GitHub.Controllers
 
             var userId = User.Identity.GetUserId();
 
-            var attendances = _attendanceRepository.GetFutureAttendances(userId).ToLookup(a => a.GigId);
+            var attendances = _unitOfWork.Attendees.GetFutureAttendances(userId).ToLookup(a => a.GigId);
 
             var viewModel = new GigsViewModel()
             {

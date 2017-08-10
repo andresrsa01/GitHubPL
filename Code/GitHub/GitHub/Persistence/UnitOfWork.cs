@@ -5,7 +5,7 @@ using System.Web;
 using GitHub.Core;
 using GitHub.Core.Models;
 using GitHub.Core.Repositories;
-using GitHub.Persistence.Repositories.Repositories;
+using GitHub.Persistence.Repositories;
 
 namespace GitHub.Persistence
 {
@@ -20,6 +20,9 @@ namespace GitHub.Persistence
         public IFollowingRepository Followings { get; private set; }
 
         public IGenreRepository Genres { get; private set; }
+        public IApplicationUserRepository Users { get; private set; }
+
+        public INotificationRepository Notifications { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
@@ -28,11 +31,14 @@ namespace GitHub.Persistence
             Attendees = new AttendanceRepository(_context);
             Followings = new FollowingRepository(_context);
             Genres= new GenreRepository(_context);
+            Users=new ApplicationUserRepository(_context);
         }
 
         public void Complete()
         {
             _context.SaveChanges();
         }
+
+       
     }
 }

@@ -18,12 +18,10 @@ namespace GitHub.Controllers.Api
     [Authorize]
     public class NotificationsController : ApiController
     {
-
-        private readonly ApplicationDbContext _context;
-
-        public NotificationsController()
+        private readonly UnitOfWork _unitOfWork;
+        public NotificationsController(UnitOfWork unitOfWork)
         {
-            _context = new ApplicationDbContext();
+            _unitOfWork = unitOfWork;
         }
         public IEnumerable<NotificationDto> GetNewNotifications()
         {
@@ -44,14 +42,12 @@ namespace GitHub.Controllers.Api
                 ? userManager.FindByEmail(att)
                 : userManager.FindById(att);
 
-            var notifications = _context.UserNotifications
-                .Where(u => u.UserId == userId.Id && !u.IsRead)
-                .Select(u => u.Notification)
-                .Include(n => n.Gig.Artist)
-                .ToList();
+            var notifications = GetNotifications(userId);
 
             return notifications.Select(Mapper.Map<Notification, NotificationDto>);
         }
+
+      
 
         [HttpPost]
         public IHttpActionResult MarkAsRead()

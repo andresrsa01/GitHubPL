@@ -1,31 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using GitHub.Core.Models;
-using GitHub.Persistence;
+﻿using System.Web.Mvc;
+using GitHub.Core;
 using Microsoft.AspNet.Identity;
 
 namespace GitHub.Controllers
 {
     public class FolloweesController : Controller
     {
-        private ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public FolloweesController()
+        public FolloweesController(IUnitOfWork unitOfWork)
         {
-            _context= new ApplicationDbContext();
+            _unitOfWork = unitOfWork;
         }
 
         // GET: Followees
         public ActionResult Index()
         {
             var userId = User.Identity.GetUserId();
-            var artists = _context.Followings
-                .Where(f => f.FollowerId == userId)
-                .Select(f => f.Followee)
-                .ToList();
+            var artists = _unitOfWork.Users.GetArtistsFollowedBy(userId);
 
             return View(artists);
         }
