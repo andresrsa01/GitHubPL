@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using GitHub.Core.Models;
 
-namespace GitHub.Persistence.Repositories
+namespace GitHub.Core.Repositories
 {
     public interface INotificationRepository
     {

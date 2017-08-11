@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web;
 using GitHub.Core.Models;
+using GitHub.Core.Repositories;
 
 namespace GitHub.Persistence.Repositories
 {

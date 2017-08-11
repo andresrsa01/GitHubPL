@@ -2,6 +2,7 @@ using System.Web.Http;
 using GitHub.Core;
 using GitHub.Core.Dtos;
 using GitHub.Core.Models;
+using GitHub.Persistence;
 using Microsoft.AspNet.Identity;
 
 namespace GitHub.Controllers.Api
@@ -10,6 +11,11 @@ namespace GitHub.Controllers.Api
     public class FollowingsController : ApiController
     {
         private readonly IUnitOfWork _unitOfWork;
+
+        public FollowingsController() : this(new UnitOfWork())
+        {
+
+        }
 
         public FollowingsController(IUnitOfWork unitOfWork)
         {

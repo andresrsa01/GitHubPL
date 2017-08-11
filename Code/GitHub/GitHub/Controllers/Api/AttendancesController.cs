@@ -1,13 +1,10 @@
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using System.Web.Http;
 using GitHub.Core;
 using GitHub.Core.Dtos;
 using GitHub.Core.Models;
 using GitHub.Persistence;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace GitHub.Controllers.Api
 {
@@ -16,6 +13,11 @@ namespace GitHub.Controllers.Api
     {
         private readonly IUnitOfWork _unitOfWork;
 
+        public AttendancesController() : this(new UnitOfWork())
+        {
+
+        }
+
         public AttendancesController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -23,7 +25,7 @@ namespace GitHub.Controllers.Api
 
         //TODO tipo de autenticacion
         [HttpPost]
-        public async Task<IHttpActionResult> Attend(AttendanceDto dto)
+        public IHttpActionResult Attend(AttendanceDto dto)
         {
             string att = null;
             if (User.Identity.IsAuthenticated)
@@ -34,17 +36,13 @@ namespace GitHub.Controllers.Api
                     att = claimsIdentity.Claims.First().Value;
                 }
             }
-            _context = new ApplicationDbContext();
-            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_context));
+            var user = _unitOfWork.Users.ObtainUser(User.Identity.AuthenticationType, att);
 
-            var user = User.Identity.AuthenticationType != "ApplicationCookie"
-                ? await userManager.FindByEmailAsync(att)
-                : await userManager.FindByIdAsync(att);
+            if (user == null) return NotFound();
 
             var atten = _unitOfWork.Attendees.GetAttendance(dto.GigId, user.Id);
             if (atten != null)
                 return BadRequest("The Attendance already exists.");
-
 
             var attendance = new Attendance()
             {
@@ -69,18 +67,15 @@ namespace GitHub.Controllers.Api
                     att = claimsIdentity.Claims.First().Value;
                 }
             }
-            _context = new ApplicationDbContext();
-            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_context));
+            var user = _unitOfWork.Users.ObtainUser(User.Identity.AuthenticationType, att);
 
-            var user = User.Identity.AuthenticationType != "ApplicationCookie"
-                ? userManager.FindByEmail(att)
-                : userManager.FindById(att);
+            if (user == null) return NotFound();
 
             var atten = _unitOfWork.Attendees.GetAttendance(id, user.Id);
-            if (atten != null)
+            if (atten == null)
                 return NotFound();
 
-            _unitOfWork.Attendees.Remove(attendance);
+            _unitOfWork.Attendees.Remove(atten);
             _unitOfWork.Complete();
             return Ok(id);
 

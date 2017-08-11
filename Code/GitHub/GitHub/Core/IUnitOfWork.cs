@@ -14,6 +14,10 @@ namespace GitHub.Core
 
         IApplicationUserRepository Users { get; }
 
+        IUserNotificationRepository UserNotifications { get; }
+
+        INotificationRepository Notifications { get; }
+
         void Complete();
     }
 }

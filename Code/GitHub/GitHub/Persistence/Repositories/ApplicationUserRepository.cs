@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using GitHub.Core.Models;
 using GitHub.Core.Repositories;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace GitHub.Persistence.Repositories
 {
@@ -24,5 +24,15 @@ namespace GitHub.Persistence.Repositories
                .ToList();
         }
 
+        public ApplicationUser ObtainUser(string authenticationType, string data)
+        {
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(_context));
+
+            var user = authenticationType != "ApplicationCookie"
+                ? userManager.FindByEmail(data)
+                : userManager.FindById(data);
+
+            return user;
+        }
     }
 }

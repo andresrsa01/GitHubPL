@@ -1,6 +1,7 @@
-﻿using System.Web.Http;
+﻿ using System.Web.Http;
 using GitHub.Core;
-using Microsoft.AspNet.Identity;
+ using GitHub.Persistence;
+ using Microsoft.AspNet.Identity;
 
 namespace GitHub.Controllers.Api
 {
@@ -8,6 +9,11 @@ namespace GitHub.Controllers.Api
     public class GigsController : ApiController
     {
         private readonly IUnitOfWork _unitOfWork;
+
+        public GigsController() : this(new UnitOfWork())
+        {
+
+        }
 
         public GigsController(IUnitOfWork unitOfWork)
         {
